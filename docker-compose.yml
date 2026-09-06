@@ -1,4 +1,13 @@
+# ==================================================================================================
+# DOCKER COMPOSE ORCHESTRATOR FOR MOSAIC HEALTHCARE MULTI-CLOUD PLATFORM
+# Purpose: Zero-configuration local verification of Terraform IaC, OPA Rego rules, and test suites
+# ==================================================================================================
+
 services:
+  # ------------------------------------------------------------------------------------------------
+  # COMPLIANCE VALIDATOR CONTAINER
+  # Runs isolated tests against Terraform configuration and OPA security policies
+  # ------------------------------------------------------------------------------------------------
   terraform-compliance-validator:
     build:
       context: .
