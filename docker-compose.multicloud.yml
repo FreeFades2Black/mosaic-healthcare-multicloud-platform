@@ -1,0 +1,66 @@
+# ==================================================================================================
+# UNIFIED MULTI-CLOUD DOCKER COMPOSE ORCHESTRATOR
+# Project: Mosaic Healthcare Multi-Cloud Platform
+# Purpose: Spins up the complete microservice and compliance stack identically on any machine
+# Target Ports: 8080 (Ingestion), 8090 (Analytics/TimesFM), Isolated Compliance Engine
+# ==================================================================================================
+
+services:
+  # 1. HL7 / FHIR Clinical Ingestion Microservice (Simulates AWS ECS / Azure Container App)
+  clinical-ingestion-service:
+    build:
+      context: ./containers/clinical_ingestion
+      dockerfile: Dockerfile
+    image: freefades2black/mosaic-clinical-ingestion:latest
+    container_name: mosaic-clinical-ingestion
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - CLOUD_PROVIDER=LOCAL_EMULATOR
+      - ENVIRONMENT=prod
+      - STORAGE_TARGET=/tmp/mosaic/bronze
+    volumes:
+      - mosaic_shared_medallion:/tmp/mosaic
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # 2. TimesFM-3 Bed Surge & Clinical Analytics Engine (Simulates AWS App Runner / Azure ACA)
+  clinical-analytics-service:
+    build:
+      context: ./containers/clinical_analytics
+      dockerfile: Dockerfile
+    image: freefades2black/mosaic-clinical-analytics:latest
+    container_name: mosaic-clinical-analytics
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    environment:
+      - CLOUD_PROVIDER=LOCAL_EMULATOR
+      - ENVIRONMENT=prod
+      - GOLD_STORAGE_PATH=/tmp/mosaic/gold
+    volumes:
+      - mosaic_shared_medallion:/tmp/mosaic
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8090/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # 3. Infrastructure Compliance & OPA Policy Validator
+  terraform-compliance-validator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: freefades2black/mosaic-healthcare-multicloud-platform:latest
+    container_name: mosaic-compliance-validator
+    environment:
+      - TF_VAR_environment=prod
+    command: ["python", "-m", "pytest", "tests/", "-v"]
+
+volumes:
+  mosaic_shared_medallion:
+    name: mosaic_shared_medallion

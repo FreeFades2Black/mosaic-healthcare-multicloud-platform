@@ -230,3 +230,29 @@ resource "aws_iam_role_policy_attachment" "databricks_s3_attach" {
   role       = aws_iam_role.databricks_unity_catalog_role.name
   policy_arn = aws_iam_policy.databricks_s3_access_policy.arn
 }
+
+# --------------------------------------------------------------------------------------------------
+# AWS ELASTIC CONTAINER REGISTRY (ECR) FOR PORTABLE CLINICAL MICROSERVICES
+# Secure OCI container registries with KMS encryption and automated vulnerability scanning
+# --------------------------------------------------------------------------------------------------
+resource "aws_ecr_repository" "clinical_containers" {
+  for_each             = toset(["clinical-ingestion", "clinical-analytics"])
+  name                 = "${var.organization_prefix}-${each.key}-${var.environment}"
+  image_tag_mutability = "IMMUTABLE"
+
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = aws_kms_key.mosaic_healthcare_kms.arn
+  }
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = {
+    Name        = "${var.organization_prefix}-${each.key}"
+    Compliance  = "HIPAA-Container-Scan"
+    Environment = var.environment
+  }
+}
+

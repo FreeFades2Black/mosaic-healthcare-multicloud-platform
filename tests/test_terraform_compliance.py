@@ -105,3 +105,13 @@ def test_opa_hipaa_rego_policy_integrity():
     content = rego_file.read_text(encoding="utf-8")
     assert "package terraform.hipaa" in content, "Incorrect OPA package namespace"
     assert "aws_s3_bucket_public_access_block" in content, "Missing S3 public access block rule in OPA"
+
+
+def test_multicloud_container_registries():
+    """Verify AWS ECR and Azure ACR container registry resources are declared."""
+    aws_content = (TERRAFORM_DIR / "aws_infrastructure.tf").read_text(encoding="utf-8")
+    azure_content = (TERRAFORM_DIR / "azure_infrastructure.tf").read_text(encoding="utf-8")
+
+    assert "aws_ecr_repository" in aws_content, "Missing aws_ecr_repository in AWS infrastructure"
+    assert "azurerm_container_registry" in azure_content, "Missing azurerm_container_registry in Azure infrastructure"
+

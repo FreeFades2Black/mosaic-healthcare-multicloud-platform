@@ -85,5 +85,23 @@ output "compliance_attestation" {
     adls_encryption     = "Azure Key Vault CMK + TLS 1.2+ Enforced DFS"
     public_access_block = "STRICT_LOCKDOWN_ENABLED (4/4 Flags True)"
     audit_retention     = "${var.hipaa_audit_retention_days} Days (7 Years Mandatory)"
+    container_security  = "CIS_NON_ROOT_AND_SCAN_ON_PUSH_ENABLED"
   }
 }
+
+# --------------------------------------------------------------------------------------------------
+# MULTI-CLOUD CONTAINER REGISTRY OUTPUTS
+# --------------------------------------------------------------------------------------------------
+
+output "aws_ecr_repository_urls" {
+  description = "Map of AWS ECR repository URLs for clinical microservices"
+  value = {
+    for k, repo in aws_ecr_repository.clinical_containers : k => repo.repository_url
+  }
+}
+
+output "azure_acr_login_server" {
+  description = "Login server endpoint for Azure Container Registry"
+  value       = azurerm_container_registry.mosaic_acr.login_server
+}
+

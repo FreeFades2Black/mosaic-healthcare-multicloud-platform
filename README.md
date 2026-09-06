@@ -111,35 +111,73 @@ To transition this Infrastructure-as-Code foundation into full Fortune 500 hospi
 
 ---
 
-## 🚀 Quickstart & Validation
+## 🐳 Multi-Cloud Container Portability & Cross-Provider Workload Transfer
+
+Containerization is the fundamental architectural layer that decouples **Mosaic Healthcare's** clinical business logic, ingestion pipelines, and AI models from cloud-specific vendor proprietary runtimes. By packaging workloads into compliant OCI containers, the platform achieves **100% compute diversification and seamless workload mobility between AWS, Microsoft Azure, and On-Premises/Edge bare-metal nodes**.
+
+```
+                         ┌──────────────────────────────────────────────┐
+                         │   GLOBAL ANYCAST DNS / TRAFFIC ORCHESTRATOR   │
+                         │      (AWS Route 53 / Azure Front Door)       │
+                         └──────────────────────┬───────────────────────┘
+                                                │
+                 ┌──────────────────────────────┴──────────────────────────────┐
+                 ▼                                                             ▼
+  ┌──────────────────────────────┐                              ┌──────────────────────────────┐
+  │   AMAZON WEB SERVICES (AWS)  │ ◄─────── Zero-Downtime ─────►│     MICROSOFT AZURE CLOUD    │
+  │ • AWS ECS / Fargate          │         Active-Active        │ • Azure Container Apps (ACA) │
+  │ • AWS EKS (Spark on K8s)     │        Workload Shift        │ • Azure AKS (Spark on K8s)   │
+  │ • Amazon ECR Registry        │                              │ • Azure ACR Registry         │
+  │ • S3 Medallion (Bronze/Gold) │                              │ • ADLS Gen2 Hierarchical DFS │
+  └──────────────┬───────────────┘                              └──────────────┬───────────────┘
+                 │                                                             │
+                 └──────────────────────────────┬──────────────────────────────┘
+                                                ▼
+                         ┌──────────────────────────────────────────────┐
+                         │      DATABRICKS UNITY CATALOG METASTORE      │
+                         │ Central Multi-Cloud Data Sharing & Governance│
+                         └──────────────────────────────────────────────┘
+```
+
+---
+
+### 📍 Where Containers Fit in the Multi-Cloud Topology
+
+| Workload Tier | Component | AWS Container Host | Azure Container Host | Local / Bare-Metal Edge |
+| :--- | :--- | :--- | :--- | :--- |
+| **Ingestion Edge** | [`clinical_ingestion`](containers/clinical_ingestion/) (HL7/FHIR Ingestion) | **AWS ECS / Fargate** | **Azure Container Apps** | **Docker Compose (Port 8080)** |
+| **Analytics & AI** | [`clinical_analytics`](containers/clinical_analytics/) (TimesFM-3 Bed Surge API) | **AWS App Runner / ECS** | **Azure App Service (Linux)**| **Docker Compose (Port 8090)** |
+| **Distributed Spark**| Spark Delta Engine (Bronze $\rightarrow$ Silver $\rightarrow$ Gold) | **Amazon EKS (Fargate)** | **Azure AKS (System Pool)** | **Local PySpark Container** |
+| **Compliance Gate** | [`validator`](Dockerfile) (Terraform & OPA Policy Runner) | **AWS CodeBuild / Actions** | **Azure DevOps Pipelines** | **Docker Compose (On-Demand)**|
+
+---
+
+### 🔄 How Workloads Transfer Between AWS and Azure
+
+1. **Dual Registry Synchronization:** Build once using `docker buildx` and push identical multi-arch container images (`linux/amd64`, `linux/arm64`) to both **Amazon ECR** (`aws_ecr_repository.clinical_containers`) and **Azure Container Registry** (`azurerm_container_registry.mosaic_acr`).
+2. **Global Traffic Shifting:** In the event of an AWS us-east-1 regional degradation or cloud provider pricing shift, global traffic is dynamically routed to Azure Container Apps via Weighted DNS / Health Probes with zero code changes.
+3. **Storage Abstraction via Unity Catalog:** Containers interact with the Medallion lakehouse through Unity Catalog's cloud-agnostic Delta Lake APIs, abstracting away underlying S3 and ADLS Gen2 storage nuances.
+
+---
+
+## 🚀 Quickstart & Multi-Cloud Docker Execution
 
 ```bash
 # 1. Clone repository
 git clone https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform.git
 cd mosaic-healthcare-multicloud-platform
 
-# 2. Run unit and compliance test suite
+# 2. Run complete unit, compliance, and container test suite (12 tests)
 python -m pytest tests/ -v
 
-# 3. Initialize remote S3 backend with DynamoDB lock table
-cd terraform
-terraform init \
-  -backend-config="bucket=mosaic-healthcare-tfstate-prod-useast1" \
-  -backend-config="dynamodb_table=mosaic-healthcare-tflocks-prod"
+# 3. Launch the full multi-cloud microservice stack locally in Docker
+docker compose -f docker-compose.multicloud.yml up -d
 
-# 4. Validate Terraform syntax
-terraform validate
+# 4. Ingest a sample FHIR patient encounter into the containerized Bronze layer
+curl -X POST http://localhost:8080/api/v1/ingest/encounter \
+  -H "Content-Type: application/json" \
+  -d '{"encounter_id":"ENC-101","patient_id_pseudonym":"PAT-99","facility_ccn":"420078","encounter_type":"EMERGENCY"}'
 
-# 5. Execute dry-run plan
-terraform plan -var-file="terraform.tfvars" -out="mosaic_prod.tfplan"
-```
-
----
-
-## 🐳 Docker Containerization
-
-Run the compliance and Terraform validation suite in an isolated, non-root container:
-
-```bash
-docker compose up --build
+# 5. Query the containerized TimesFM-3 bed surge predictive API
+curl http://localhost:8090/api/v1/analytics/bed-surge/summary
 ```

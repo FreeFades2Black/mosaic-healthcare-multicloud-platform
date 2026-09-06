@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mosaic-clinical-analytics
+  namespace: mosaic-healthcare
+  labels:
+    app.kubernetes.io/name: mosaic-clinical-analytics
+    app.kubernetes.io/part-of: mosaic-healthcare-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mosaic-clinical-analytics
+  template:
+    metadata:
+      labels:
+        app: mosaic-clinical-analytics
+    spec:
+      containers:
+        - name: analytics
+          image: freefades2black/mosaic-clinical-analytics:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8090
+              name: http
+          env:
+            - name: ENVIRONMENT
+              value: "prod"
+            - name: GOLD_STORAGE_PATH
+              value: "/mnt/gold"
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10008
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8090
+            initialDelaySeconds: 10
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosaic-clinical-analytics-svc
+  namespace: mosaic-healthcare
+spec:
+  type: ClusterIP
+  selector:
+    app: mosaic-clinical-analytics
+  ports:
+    - port: 8090
+      targetPort: 8090
+      protocol: TCP
+      name: http

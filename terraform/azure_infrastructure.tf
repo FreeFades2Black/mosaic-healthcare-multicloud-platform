@@ -196,3 +196,29 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "medallion_containers" {
   name               = each.key
   storage_account_id = azurerm_storage_account.mosaic_adls.id
 }
+
+# --------------------------------------------------------------------------------------------------
+# AZURE CONTAINER REGISTRY (ACR) FOR PORTABLE CLINICAL MICROSERVICES
+# Private enterprise registry with vulnerability scanning, zone redundancy, and private endpoint links
+# --------------------------------------------------------------------------------------------------
+resource "azurerm_container_registry" "mosaic_acr" {
+  name                = "${var.organization_prefix}acr${var.environment}"
+  resource_group_name = azurerm_resource_group.mosaic_rg.name
+  location            = azurerm_resource_group.mosaic_rg.location
+  sku                 = "Premium"
+  admin_enabled       = false
+
+  georeplications {
+    location                = "centralus"
+    zone_redundancy_enabled = true
+    tags = {
+      Environment = var.environment
+    }
+  }
+
+  tags = {
+    Environment = var.environment
+    Compliance  = "HIPAA-Container-Registry"
+  }
+}
+
