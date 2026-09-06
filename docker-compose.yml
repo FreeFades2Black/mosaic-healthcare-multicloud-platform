@@ -1,0 +1,10 @@
+services:
+  terraform-compliance-validator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: freefades2black/mosaic-healthcare-multicloud-platform:latest
+    container_name: mosaic-healthcare-validator
+    environment:
+      - TF_VAR_environment=prod
+    command: ["python", "-m", "pytest", "tests/", "-v"]
