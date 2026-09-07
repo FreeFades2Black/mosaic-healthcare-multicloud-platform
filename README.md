@@ -181,3 +181,21 @@ curl -X POST http://localhost:8080/api/v1/ingest/encounter \
 # 5. Query the containerized TimesFM-3 bed surge predictive API
 curl http://localhost:8090/api/v1/analytics/bed-surge/summary
 ```
+
+---
+
+## 🏛️ Enterprise Cloud Architecture & M&A Governance Portal
+
+For comprehensive architectural design records, M&A due diligence frameworks, and live build telemetry:
+
+* 🌐 **Live Governance Portal:** [https://freefades2black.github.io/mosaic-health-cloud-architecture/](https://freefades2black.github.io/mosaic-health-cloud-architecture/)
+* 📊 **Azure Build & Telemetry Monitor:** [https://freefades2black.github.io/mosaic-health-cloud-architecture/dashboards/azure-build-monitor/](https://freefades2black.github.io/mosaic-health-cloud-architecture/dashboards/azure-build-monitor/)
+* 🤖 **AI Foundry Agent Regulation:** [https://freefades2black.github.io/mosaic-health-cloud-architecture/compliance-hitrust/ai-foundry-governance/](https://freefades2black.github.io/mosaic-health-cloud-architecture/compliance-hitrust/ai-foundry-governance/)
+* 🔐 **Workload Identity Federation:** Configured via zero-secret GitHub Actions OIDC (`AZURE_CLIENT_ID` / `AZURE_TENANT_ID`).
+
+---
+
+## 📄 License & Architecture Review Board
+
+Copyright &copy; 2026 Mosaic Healthcare Enterprise Architecture & Infrastructure Operations.  
+Licensed under the **Apache-2.0 License**.
