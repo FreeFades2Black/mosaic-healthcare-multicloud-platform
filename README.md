@@ -1,10 +1,17 @@
 # 🏥 Mosaic Healthcare Multi-Cloud Platform
 
+[![CI/CD Multi-Cloud](https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform/actions/workflows/terraform_ci.yml/badge.svg)](https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform/actions/workflows/terraform_ci.yml)
 [![Multi-Cloud Architecture](https://img.shields.io/badge/Architecture-AWS%20%2B%20Azure%20%2B%20Databricks-blue?style=for-the-badge&logo=databricks&logoColor=white)](https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform)
 [![Compliance](https://img.shields.io/badge/Compliance-HIPAA%20%7C%20HITRUST-emerald?style=for-the-badge&logo=shield&logoColor=white)](https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform)
 [![Terraform](https://img.shields.io/badge/IaC-Terraform%20v1.6%2B-purple?style=for-the-badge&logo=terraform&logoColor=white)](https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform)
 [![Unity Catalog](https://img.shields.io/badge/Governance-Unity%20Catalog-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)](https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform)
 [![Docker](https://img.shields.io/badge/Containers-Multi--Stage%20Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/FreeFades2Black/mosaic-healthcare-multicloud-platform)
+
+---
+
+> ### ℹ️ **Infrastructure Integrity & Data Classification Notice**
+> - **Real Infrastructure & Cloud Builds:** The underlying multi-cloud architecture, Terraform modules for AWS (S3, KMS, IAM) and Azure (VNet Injection, ADLS Gen2, Key Vault), Databricks Unity Catalog metastore configurations, OPA Rego governance policies, and container definitions are **100% real, operational, and validated**.
+> - **Simulated Data & Scenarios:** All clinical encounters (FHIR JSON payloads), bed surge telemetry forecasts, facility CCNs, and emergency metrics are **simulated / synthetic reference data** engineered for cross-cloud pipeline validation, compliance verification, and microservice testing. No actual Protected Health Information (PHI) or live patient records are stored or transmitted.
 
 ---
 
