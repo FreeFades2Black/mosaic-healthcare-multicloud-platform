@@ -1,0 +1,22 @@
+groups:
+  - name: multicloud_hipaa_alerts
+    rules:
+      - alert: CrossCloudReplicationLagHigh
+        expr: max(cross_cloud_replication_lag_seconds) > 60
+        for: 5m
+        labels:
+          severity: critical
+          tier: storage
+        annotations:
+          summary: "HIPAA audit replication lag between AWS and Azure > 60s"
+          description: "Cross-cloud audit trail synchronization is falling behind. Check IPsec tunnel throughput."
+
+      - alert: IPsecTunnelDown
+        expr: vpn_tunnel_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          tier: network
+        annotations:
+          summary: "Cross-cloud IPsec interconnect down"
+          description: "Primary VPN tunnel between AWS EKS and Azure VNet has dropped."

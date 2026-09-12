@@ -1,0 +1,70 @@
+{
+  "title": "Mosaic Multi-Cloud Platform Observability",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "title": "Cross-Cloud Audit Replication Lag (s)",
+      "type": "stat",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "max(cross_cloud_replication_lag_seconds)",
+          "legendFormat": "Replication Lag"
+        }
+      ]
+    },
+    {
+      "title": "Confidential Enclave Attestation Status",
+      "type": "stat",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(nitro_enclave_attestation_success_total)",
+          "legendFormat": "Attested Nodes"
+        }
+      ]
+    },
+    {
+      "title": "IPsec Cross-Cloud Tunnel Throughput (MB/s)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(vpn_tunnel_bytes_total[5m]) / 1048576",
+          "legendFormat": "MB/s Bandwidth"
+        }
+      ]
+    },
+    {
+      "title": "Terraform Multi-Cloud Compliance Pass Rate",
+      "type": "gauge",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "avg(terraform_compliance_score)",
+          "legendFormat": "% Compliant"
+        }
+      ]
+    }
+  ]
+}
