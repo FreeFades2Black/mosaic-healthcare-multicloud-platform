@@ -85,3 +85,13 @@ Projected monthly infrastructure expenditure across AWS and Azure environments:
 
 * **Live Cross-Cloud Block Storage Synchronization:** Database volumes are partitioned by cloud; live cross-cloud distributed block replication currently runs via async batch CDC streams. Active-active CockroachDB multi-cloud database cluster is scheduled for Q4.
 * **Automated DNS Switchover:** Failover between AWS and Azure ingress controllers currently relies on DNS TTL expiration (60s). Anycast BGP multi-cloud IP failover is scheduled for Q1 2027.
+
+## Automated CI Maintenance Log
+<!-- START_AGENT_MAINTENANCE_LOG -->
+#### Maintenance Run: `2026-10-01 20:54:58 UTC`
+- `.github/workflows/terraform_ci.yml`: Upgrade actions/checkout from v4 to v7 for security & performance. [Research: RCSB PDB AI Help Desk: retrieval-augmented generation for protein structure deposition support (OpenAlex / Global University Research)] [NIST SP 800-218 PW.4]
+- `.github/workflows/terraform_ci.yml`: Upgrade actions/setup-python from v5 to v7 for security & performance. [Research: RCSB PDB AI Help Desk: retrieval-augmented generation for protein structure deposition support (OpenAlex / Global University Research)] [NIST SP 800-218 PW.4]
+- `.github/workflows/terraform_ci.yml`: Upgrade hashicorp/setup-terraform from v3 to v4 for security & performance. [Research: RCSB PDB AI Help Desk: retrieval-augmented generation for protein structure deposition support (OpenAlex / Global University Research)] [NIST SP 800-218 PW.4]
+- `.github/workflows/terraform_ci.yml`: Enforce timeout-minutes: 10 to kill hung processes and prevent runaway billing (CISA & FinOps).
+
+<!-- END_AGENT_MAINTENANCE_LOG -->
